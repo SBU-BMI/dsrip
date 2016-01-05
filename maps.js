@@ -8,19 +8,63 @@ dsripMap=function(){
 }
 
 dsripMap.readFileUrl=function(url){
-    $.get(url).then(function(txt){
-        // convert csv into array of arrays
-        txt = txt.split(/\n/).map(function(txti){
-            // concate {} arrays
-            return txti.split(',')
-        })
-        // parse it into a structure
+    dsripMapsMsg.innerHTML='<span style="color:red">loading ...</a>'
+    Plotly.d3.csv(url, function(err, rows){
+        rows = rows.filter(function(r){return r.county_name=='Suffolk'})
+        dsripMapsMsg.innerHTML='<span style="color:blue">loaded '+rows.length+' records</a>'
+        var unpack = function (key) { // note this is scoping rows
+            return rows.map(function(row) {
+                return row[key]
+            })
+        }
+        $('<div id="suffolkPlotly" style="width:100%;height:100%"></div>').appendTo(dsripMapsAction)
+        var lat = unpack('y').map(function(yi){return parseFloat(yi)}) // latitude
+        var lon = unpack('x').map(function(xi){return parseFloat(xi)}) // latitude      
+        var data = [{
+        type: 'scattergeo',
+        mode: 'markers+text',
+        //text: unpack('geo_name'),
+        lon: lon,
+        lat: lat 
+        }]
+        var layout = {
+            title: 'Suffolk county',
+            font: {
+                family: 'Droid Serif, serif',
+                size: 6
+            },
+            titlefont: {
+                size: 16
+            },
+            geo: {
+                scope: 'usa',
+                resolution: 50,
+                lonaxis: {
+                    'range': [Math.min.apply(null,lon), Math.max.apply(null,lon)]
+                },
+                lataxis: {
+                    'range': [Math.min.apply(null,lat), Math.max.apply(null,lat)]
+                },
+                showrivers: true,
+                rivercolor: '#fff',
+                showlakes: true,
+                lakecolor: '#fff',
+                showland: true,
+                landcolor: '#EAEAAE',
+                countrycolor: '#d3d3d3',
+                countrywidth: 1.5,
+                subunitcolor: '#d3d3d3'
+            }
+        };
+
+        Plotly.newPlot(suffolkPlotly, data, layout)
+
+        $('<div id="suffolkLeaflet"></div>').appendTo(dsripMapsAction)
         
 
 
         4
     })
-
     4
 }
 
