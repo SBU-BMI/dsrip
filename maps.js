@@ -4,8 +4,8 @@ console.log('maps.js loaded')
 
 dsripMap=function(){
     // ini
-    //dsripMap.boxCom()
-    dsripMap.plot(JSON.parse(sessionStorage.getItem('rows')))
+    dsripMap.boxCom()
+    //dsripMap.plot(JSON.parse(sessionStorage.getItem('rows')))
 }
 
 dsripMap.stats={} // we'll keep them here
