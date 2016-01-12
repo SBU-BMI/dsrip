@@ -27,8 +27,13 @@ dsripMap=function(){
     }
 }
 
+dsripMap.availParms = ["total_population", "land_area_square_meters", "population_density_per_square_kilometer", "total_population_non_hispanic", "total_population_hispanic", "fraction_population_non_hispanic", "fraction_population_hispanic", "total_households", "spanish_language_households", "fraction_spanish_language_households", "english_language_households", "fraction_english_language_households", "median_age", "median_household_income_2013", "per_capita_income_2013", "total_households_receiving_snap", "total_households_with_one_disability", "fraction_receiving_snap", "fraction_with_one_disability", "total_households_owner_occupied", "total_households_renter_occupied", "fraction_households_owner_occupied", "fraction_households_renter_occupied", "total", "total_white", "total_african_american", "total_native_american", "total_asian_american", "total_two_or_more_races", "fraction_population_white", "fraction_population_african_american", "fraction_population_native_american", "fraction_population_asian_american", "fraction_population_two_or_more_races","x","y"]    
 dsripMap.stats={} // we'll keep them here
-
+dsripMap.cPdf=function(x,u,s){
+    u=u||0
+    s=s||1
+    return Math.round(255*(1/(s*Math.sqrt(2*Math.PI)))*(Math.exp((-Math.pow((x-u),2))/(2*Math.pow(s,2))))/(1/(s*Math.sqrt(2*Math.PI))))
+}
 dsripMap.plot=function(rows){
     dsripMap.rows=rows
     dsripMapsMsg.innerHTML='<span style="color:blue">Loaded '+rows.length+' records, displaying <select id="selectValParm" style="color:blue"></span>: '
@@ -51,17 +56,27 @@ dsripMap.plot=function(rows){
         // Prepare statistics for all
         dsripMap.stats.all={}
         dsripMap.stats.all.parmSelected = dsripMap.unpack(dsripMap.parms.valParm)
-        dsripMap.stats.all.parmSelected_max = 0
+        dsripMap.stats.all.parmSelected_max=dsripMap.stats.all.parmSelected.reduce(function(a,b){
+            if(a>b){return a}else{return b}
+        })
+        dsripMap.stats.all.parmSelected_min=dsripMap.stats.all.parmSelected.reduce(function(a,b){
+            if(a<b){return a}else{return b}
+        })
+        4
+        /*
+        dsripMap.stats.all.parmSelected_max = dsripMap.stats.all.parmSelected[0]
         dsripMap.stats.all.parmSelected.forEach(function(v){
             if(v>dsripMap.stats.all.parmSelected_max){
                 dsripMap.stats.all.parmSelected_max=v
             }
         })
+        */
         var cmax = dsripMap.stats.all.parmSelected_max
+        var cmin = dsripMap.stats.all.parmSelected_min
         var cval = dsripMap.stats.all.parmSelected
-        cval=cval.map(function(v){
-            return (v||0)
-        })
+        //cval=cval.map(function(v){
+        //    return (v||0)
+        //})
 
         dsripMap.rowPoly={} // notice how this is being passed as an object, not as an array
         rows.forEach(function(row,i){
@@ -83,7 +98,7 @@ dsripMap.plot=function(rows){
                     })
                     //var r = Math.round(255*cval[i]/cmax)
                     //var c ='rgb('+r+','+(255-r)+',0)'
-                    var c = dsripMap.color(cval[i]/cmax)
+                    var c = dsripMap.color((cval[i]-cmin)/(cmax-cmin))
                     dsripMap.rowPoly[i][j]= new google.maps.Polygon({
                         paths: pp,
                         strokeColor: c,
@@ -107,15 +122,17 @@ dsripMap.plot=function(rows){
 dsripMap.reMap=function(valParm){
     dsripMap.parms.valParm=valParm||dsripMap.parms.valParm
     // Prepare statistics for all
+    // Prepare statistics for all
     dsripMap.stats.all={}
     dsripMap.stats.all.parmSelected = dsripMap.unpack(dsripMap.parms.valParm)
-    dsripMap.stats.all.parmSelected_max = 0
-    dsripMap.stats.all.parmSelected.forEach(function(v){
-        if(v>dsripMap.stats.all.parmSelected_max){
-            dsripMap.stats.all.parmSelected_max=v
-        }
+    dsripMap.stats.all.parmSelected_max=dsripMap.stats.all.parmSelected.reduce(function(a,b){
+        if(a>b){return a}else{return b}
+    })
+    dsripMap.stats.all.parmSelected_min=dsripMap.stats.all.parmSelected.reduce(function(a,b){
+        if(a<b){return a}else{return b}
     })
     var cmax = dsripMap.stats.all.parmSelected_max
+    var cmin = dsripMap.stats.all.parmSelected_min
     var cval = dsripMap.stats.all.parmSelected
     cval=cval.map(function(v){
         return (v||0)
@@ -123,7 +140,7 @@ dsripMap.reMap=function(valParm){
     var c='' // color
     for(var i in dsripMap.rowPoly){
         for(var j in dsripMap.rowPoly[i]){
-            c=dsripMap.color(cval[i]/cmax)
+            c=dsripMap.color((cval[i]-cmin)/(cmax-cmin))
             dsripMap.rowPoly[i][j].setOptions({
                 strokeColor: c,
                 fillColor: c
@@ -135,8 +152,7 @@ dsripMap.reMap=function(valParm){
 }
 
 dsripMap.setSelectOpt=function(){
-    var parms = ["total_population", "land_area_square_meters", "population_density_per_square_kilometer", "total_population_non_hispanic", "total_population_hispanic", "fraction_population_non_hispanic", "fraction_population_hispanic", "total_households", "spanish_language_households", "fraction_spanish_language_households", "english_language_households", "fraction_english_language_households", "median_age", "median_household_income_2013", "per_capita_income_2013", "total_households_receiving_snap", "total_households_with_one_disability", "fraction_receiving_snap", "fraction_with_one_disability", "total_households_owner_occupied", "total_households_renter_occupied", "fraction_households_owner_occupied", "fraction_households_renter_occupied", "total", "total_white", "total_african_american", "total_native_american", "total_asian_american", "total_two_or_more_races", "fraction_population_white", "fraction_population_african_american", "fraction_population_native_american", "fraction_population_asian_american", "fraction_population_two_or_more_races"]
-    parms.forEach(function(p){
+    dsripMap.availParms.forEach(function(p){
         var opt = document.createElement('option')
         opt.value=opt.textContent=p
         //opt.style.color='blue'
@@ -154,7 +170,11 @@ dsripMap.polyClick=function(){
     //this.setMap(null)
     //this.setOptions({'fillColor':'blue'})
     var row = dsripMap.rows[this.i]
-    statsMouseover.innerHTML=row.geo_name
+    statsClicked.innerHTML=this.i+') '+row.geo_name+' zip '+row.intersects_zip.slice(1,-1)+' ('+row.intersects_county_subdivision.slice(1,-1)+')'
+    //this.i+') '+row.geo_name+''//<select id="parm_Y"></select><div id="statsClickedPlot"></div><select id="parm_X"></select>'
+    
+    // plot it using Plotly
+    
 }
 
 dsripMap.polyMouseover=function(){
@@ -165,7 +185,9 @@ dsripMap.polyMouseover=function(){
 }
 
 dsripMap.plotStats=function(){
-    dsripMapsStats.innerHTML='</select><table><tr><td id="statsAll"></td><td id="statsClicked"></td><td id="statsMouseover"></td></tr></table>'
+    //dsripMapsStats.innerHTML='<table><tr><td id="statsAll"></td><td id="statsClicked"></td><td id="statsMouseover"></td></tr></table>'
+    dsripMapsStats.innerHTML='<span id="statsMouseover"></span><br><span id="statsClicked"></span>'
+    
     // all stats
     
 
@@ -213,8 +235,10 @@ dsripMap.color=function(val,cm){
             return dsripMap.color(v)
         })
     }else{
-        var c = Math.round(val*255)
-        return 'rgb('+c+','+(255-c)+','+Math.abs(c-127)+')'
+        //var c = Math.round(val*255)
+        //return 'rgb('+c+','+(255-c)+','+Math.abs(c-127)+')'
+        val = val*255
+        return 'rgb('+dsripMap.cPdf(val,255,35)+','+dsripMap.cPdf(val,0,35) +','+dsripMap.cPdf(val,100,35)+')'
     }
     //var cc = cm[Math.floor(val*63)]
     //console.log(val,cc)
