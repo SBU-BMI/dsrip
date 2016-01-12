@@ -185,8 +185,20 @@ dsripMap.polyClick=function(){
         dsripMap.markers[this.i].setMap(null)
         delete dsripMap.markers[this.i]
     }
+    // summary statistics
+    //statsClicked.innerHTML=this.i+') '+row.geo_name+' zip '+row.intersects_zip.slice(1,-1)+' ('+row.intersects_county_subdivision.slice(1,-1)+')'
+    var h="(click on colored regions for cumulative statistics)"
+    var markerInd=Object.getOwnPropertyNames(dsripMap.markers)
+    if(markerInd.length>0){
+        h='<h4 style="color:blue">Average values for blocks # '+markerInd.join(', ')+'</h4>'
+        var va = 0 
+        for(var i = 0 ; i< markerInd.length ; i++){
+            va+=parseFloat(dsripMap.rows[markerInd[i]][dsripMap.parms.valParm])
+        }
+        h+='<li>'+dsripMap.parms.valParm+'= '+va/markerInd.length+'</li>'
+    }
+    statsClicked.innerHTML=h
     4
-
     // plot it using Plotly
     
 }
@@ -195,7 +207,7 @@ dsripMap.polyMouseover=function(){
     //this.setMap(null)
     //this.setOptions({'fillColor':'blue'})
     var row = dsripMap.rows[this.i]
-    statsMouseover.innerHTML=this.i+') '+row.geo_name+' zip '+row.intersects_zip.slice(1,-1)+' ('+row.intersects_county_subdivision.slice(1,-1)+')'
+    statsMouseover.innerHTML='<b style="color:blue">'+this.i+')</b> '+row.geo_name+' zip '+row.intersects_zip.slice(1,-1)+' ('+row.intersects_county_subdivision.slice(1,-1)+')<li>'+dsripMap.parms.valParm+'= '+row[dsripMap.parms.valParm]+'</li>'
 }
 
 dsripMap.plotStats=function(){
