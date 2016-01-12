@@ -36,6 +36,7 @@ dsripMap.cPdf=function(x,u,s){
 }
 dsripMap.plot=function(rows){
     dsripMap.rows=rows
+    dsripMap.markers={} // keep markers here
     dsripMapsMsg.innerHTML='<span style="color:blue">Loaded '+rows.length+' records, displaying <select id="selectValParm" style="color:blue"></span>: '
     dsripMap.setSelectOpt()
     dsripMap.unpack = function (key) { // note this is scoping rows
@@ -173,6 +174,19 @@ dsripMap.polyClick=function(){
     statsClicked.innerHTML=this.i+') '+row.geo_name+' zip '+row.intersects_zip.slice(1,-1)+' ('+row.intersects_county_subdivision.slice(1,-1)+')'
     //this.i+') '+row.geo_name+''//<select id="parm_Y"></select><div id="statsClickedPlot"></div><select id="parm_X"></select>'
     
+    // add marker
+    if(!dsripMap.markers[this.i]){ // if there is no marker there add one
+        dsripMap.markers[this.i]=new google.maps.Marker({
+            position: {lat: parseFloat(row.y), lng: parseFloat(row.x)},
+            map: dsripMap.map,
+            title: this.i+') '+row.geo_name
+        });
+    }else{
+        dsripMap.markers[this.i].setMap(null)
+        delete dsripMap.markers[this.i]
+    }
+    4
+
     // plot it using Plotly
     
 }
