@@ -104,7 +104,7 @@ dsripMap.plot=function(rows){
                         paths: pp,
                         strokeColor: c,
                         strokeOpacity: 0.8,
-                        strokeWeight: 2,
+                        strokeWeight: 1,
                         fillColor: c,
                         fillOpacity: 0.35,
                         i:i
