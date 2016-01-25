@@ -57,10 +57,11 @@ dsripMap.plot=function(rows){
         // Prepare statistics for all
         dsripMap.stats.all={}
         dsripMap.stats.all.parmSelected = dsripMap.unpack(dsripMap.parms.valParm)
-        dsripMap.stats.all.parmSelected_max=dsripMap.stats.all.parmSelected.reduce(function(a,b){
+        var parmSelected=dsripMap.stats.all.parmSelected.filter(function(x){return (!isNaN(parseFloat(x)))})
+        dsripMap.stats.all.parmSelected_max=parmSelected.reduce(function(a,b){
             if(a>b){return a}else{return b}
         })
-        dsripMap.stats.all.parmSelected_min=dsripMap.stats.all.parmSelected.reduce(function(a,b){
+        dsripMap.stats.all.parmSelected_min=parmSelected.reduce(function(a,b){
             if(a<b){return a}else{return b}
         })
         4
@@ -126,10 +127,11 @@ dsripMap.reMap=function(valParm){
     // Prepare statistics for all
     dsripMap.stats.all={}
     dsripMap.stats.all.parmSelected = dsripMap.unpack(dsripMap.parms.valParm)
-    dsripMap.stats.all.parmSelected_max=dsripMap.stats.all.parmSelected.reduce(function(a,b){
+    var parmSelected=dsripMap.stats.all.parmSelected.filter(function(x){return (!isNaN(parseFloat(x)))})
+    dsripMap.stats.all.parmSelected_max=parmSelected.reduce(function(a,b){
         if(a>b){return a}else{return b}
     })
-    dsripMap.stats.all.parmSelected_min=dsripMap.stats.all.parmSelected.reduce(function(a,b){
+    dsripMap.stats.all.parmSelected_min=parmSelected.reduce(function(a,b){
         if(a<b){return a}else{return b}
     })
     var cmax = dsripMap.stats.all.parmSelected_max
