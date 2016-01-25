@@ -27,7 +27,7 @@ dsripMap=function(){
     }
 }
 
-dsripMap.availParms = ["total_population", "land_area_square_meters", "population_density_per_square_kilometer", "total_population_non_hispanic", "total_population_hispanic", "fraction_population_non_hispanic", "fraction_population_hispanic", "total_households", "spanish_language_households", "fraction_spanish_language_households", "english_language_households", "fraction_english_language_households", "median_age", "median_household_income_2013", "per_capita_income_2013", "total_households_receiving_snap", "total_households_with_one_disability", "fraction_receiving_snap", "fraction_with_one_disability", "total_households_owner_occupied", "total_households_renter_occupied", "fraction_households_owner_occupied", "fraction_households_renter_occupied", "total", "total_white", "total_african_american", "total_native_american", "total_asian_american", "total_two_or_more_races", "fraction_population_white", "fraction_population_african_american", "fraction_population_native_american", "fraction_population_asian_american", "fraction_population_two_or_more_races","x","y"].sort()    
+//dsripMap.availParms = ["total_population", "land_area_square_meters", "population_density_per_square_kilometer", "total_population_non_hispanic", "total_population_hispanic", "fraction_population_non_hispanic", "fraction_population_hispanic", "total_households", "spanish_language_households", "fraction_spanish_language_households", "english_language_households", "fraction_english_language_households", "median_age", "median_household_income_2013", "per_capita_income_2013", "total_households_receiving_snap", "total_households_with_one_disability", "fraction_receiving_snap", "fraction_with_one_disability", "total_households_owner_occupied", "total_households_renter_occupied", "fraction_households_owner_occupied", "fraction_households_renter_occupied", "total", "total_white", "total_african_american", "total_native_american", "total_asian_american", "total_two_or_more_races", "fraction_population_white", "fraction_population_african_american", "fraction_population_native_american", "fraction_population_asian_american", "fraction_population_two_or_more_races","x","y"].sort()    
 dsripMap.stats={} // we'll keep them here
 dsripMap.cPdf=function(x,u,s){
     u=u||0
@@ -153,6 +153,27 @@ dsripMap.reMap=function(valParm){
 }
 
 dsripMap.setSelectOpt=function(){
+    if(!dsripMap.availParms){
+        dsripMap.availParms=[]
+        for(var parm in dsripMap.rows[0]){
+            var num=true
+            if(parm.match("geoid")){
+                num=false
+            } else {
+                dsripMap.rows.forEach(function(r){
+                    var v = r[parm]
+                    if((v.length>0)&&(isNaN(parseFloat(v)))){
+                        num=false
+                    }
+                    //break
+                })
+            }   
+            if(num){
+                dsripMap.availParms.push(parm)
+            }
+        }
+    }
+    4
     dsripMap.availParms.forEach(function(p){
         var opt = document.createElement('option')
         opt.value=opt.textContent=p
@@ -212,7 +233,7 @@ dsripMap.polyMouseover=function(){
 
 dsripMap.plotStats=function(){
     //dsripMapsStats.innerHTML='<table><tr><td id="statsAll"></td><td id="statsClicked"></td><td id="statsMouseover"></td></tr></table>'
-    dsripMapsStats.innerHTML='<span id="statsMouseover"></span><br><span id="statsClicked"></span>'
+    dsripMapsStats.innerHTML='<span id="statsMouseover"></span><br><span id="statsClicked"></span><img src="2dhistogram-contour-subplots.png">'
     
     // all stats
     
