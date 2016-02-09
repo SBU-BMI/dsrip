@@ -210,7 +210,7 @@ dsripMap.polyClick=function(){
     }
     // summary statistics
     //statsClicked.innerHTML=this.i+') '+row.geo_name+' zip '+row.intersects_zip.slice(1,-1)+' ('+row.intersects_county_subdivision.slice(1,-1)+')'
-    var h="(click on colored regions for cumulative statistics)"
+    var h="<p>(click on colored regions for cumulative statistics)</p>"
     var markerInd=Object.getOwnPropertyNames(dsripMap.markers)
     if(markerInd.length>0){
         h='<h4 style="color:blue">Average values for blocks # '+markerInd.join(', ')+'</h4>'
