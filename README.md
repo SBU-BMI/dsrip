@@ -1,4 +1,5 @@
 # dsrip
-apps n stuff for DSRIP
+US Survey data rendering in Google map for DSRIP project
 
-* maps live at http://sbu-bmi.github.io/dsrip/maps.html
+•maps live at http://sbu-bmi.github.io/dsrip/maps.html
+
